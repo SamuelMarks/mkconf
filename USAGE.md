@@ -1,6 +1,6 @@
 # Usage
 
-`mkconf` leverages standard system interfaces and requires a running Docker daemon.
+`mkconf` leverages standard system interfaces to generate configuration files for your projects.
 
 ## Installation
 
@@ -24,12 +24,12 @@ Provide the path to your source repository as the first argument:
 
 1. The scanner will identify the target project structure.
 2. The resolved test commands will be executed natively locally (e.g., `go test ./...` or `cargo test`).
-3. Three Dockerfiles will be generated and dumped to standard output.
-4. The tool will spawn three individual `docker build` processes:
+3. By default, `docker-compose.yml`, `Makefile`, `make.bat`, Bazel `BUILD` files, and `Dockerfile`s will be generated in the target directory.
+4. You can specify which formats to emit using the `--emit-*` flags.
+5. If the `--build` flag is provided (and a Docker daemon is running), the tool will spawn three individual `docker build` processes:
    - `app-debian`
    - `app-alpine`
    - `app-distroless`
-5. Previews of `docker-compose.yml`, `Makefile`, `make.bat`, and Bazel `BUILD` files will be printed to standard output.
 
 ## CLI Reference
 
@@ -46,6 +46,10 @@ mkconf [repo_path] [flags]
 - `-o`, `--output string`: Output directory for generated files (defaults to repo_path)
 - `--no-test`: Skip running the project's test suite
 - `--dry-run`: Do not write files or build images, only print output
+- `--emit-dockerfile`: Emit Dockerfile(s) and docker-compose.yml
+- `--emit-bazel-build-file`: Emit Bazel BUILD file
+- `--emit-makefile`: Emit Makefile and make.bat
+- `--build`: Build Docker images after generating Dockerfiles (requires Docker)
 - `-h`, `--help`: help for mkconf
 
 ## Supported Languages

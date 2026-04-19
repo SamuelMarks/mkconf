@@ -42,6 +42,12 @@ func TestHelperProcessError(t *testing.T) {
 
 func resetFlags() {
 	outputDir = ""
+	noTest = false
+	dryRun = false
+	emitDockerfile = false
+	emitBazel = false
+	emitMakefile = false
+	buildImages = false
 }
 
 func TestMainSuccess(t *testing.T) {
@@ -98,7 +104,7 @@ func TestRunPath(t *testing.T) {
 	}
 	defer func() { osExit = os.Exit }()
 
-	RootCmd.SetArgs([]string{})
+	RootCmd.SetArgs([]string{"a", "b"}) // Too many args should fail
 	Run()
 	if !exited {
 		t.Error("expected osExit to be called")
@@ -113,7 +119,7 @@ func TestMainExecution(t *testing.T) {
 	}
 	defer func() { osExit = os.Exit }()
 
-	RootCmd.SetArgs([]string{})
+	RootCmd.SetArgs([]string{"a", "b"}) // Too many args should fail
 	main()
 	if !exited {
 		t.Error("expected main to call osExit via Run")

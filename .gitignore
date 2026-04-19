@@ -36,3 +36,18 @@ app
 !ARCHITECTURE.md
 !USAGE.md
 coverage.out
+
+# Patch and diff files
+*.patch
+*.orig
+*.rej
+
+# Local binaries
+mkconf_bin
+
+# Local test outputs
+cmd/mkconf/BUILD
+cmd/mkconf/Makefile
+cmd/mkconf/make.bat
+cmd/mkconf/*.Dockerfile
+cmd/mkconf/docker-compose.yml

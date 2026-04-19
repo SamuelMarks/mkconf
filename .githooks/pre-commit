@@ -3,6 +3,16 @@ set -e
 
 echo "Running pre-commit hook..."
 
+# 0. Check formatting
+echo "Checking formatting..."
+FMT_OUTPUT=$(go fmt ./...)
+if [ -n "$FMT_OUTPUT" ]; then
+    echo "The following files were formatted:"
+    echo "$FMT_OUTPUT"
+    echo "Please stage them and try committing again."
+    exit 1
+fi
+
 # 1. Run lint checks
 echo "Running lint checks..."
 if command -v golangci-lint >/dev/null 2>&1; then
