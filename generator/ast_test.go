@@ -18,4 +18,15 @@ func TestGenerateString(t *testing.T) {
 	if out := GenerateString(root); out != expected {
 		t.Errorf("expected %q, got %q", expected, out)
 	}
+
+	rootMulti := &parser.Node{Value: "root"}
+	addInstruction(rootMulti, "FROM", "ubuntu", "AS", "builder")
+	addInstruction(rootMulti, "RUN", "echo", "hello")
+	addInstruction(rootMulti, "FROM", "scratch")
+	addInstruction(rootMulti, "COPY", "--from=builder", "/app", "/app")
+
+	expectedMulti := "FROM ubuntu AS builder\nRUN echo hello\n\nFROM scratch\nCOPY --from=builder /app /app\n"
+	if out := GenerateString(rootMulti); out != expectedMulti {
+		t.Errorf("expected %q, got %q", expectedMulti, out)
+	}
 }

@@ -35,16 +35,16 @@ func TestLoadLanguagesError(t *testing.T) {
 }
 
 func TestInitPanic(t *testing.T) {
-    defer func() {
-        if r := recover(); r == nil {
-            t.Errorf("The code did not panic")
-        }
-    }()
-    // Temporarily mess up the JSON
-    old := languagesJSON
-    languagesJSON = []byte("invalid json")
-    defer func() { languagesJSON = old }()
-    
-    // Call our initialization function
-    initialize()
+	defer func() {
+		if r := recover(); r == nil {
+			t.Errorf("The code did not panic")
+		}
+	}()
+	// Temporarily mess up the JSON
+	old := languagesJSON
+	languagesJSON = []byte("invalid json")
+	defer func() { languagesJSON = old }()
+
+	// Call our initialization function
+	initialize()
 }

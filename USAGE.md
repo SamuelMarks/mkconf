@@ -31,6 +31,23 @@ Provide the path to your source repository as the first argument:
    - `app-distroless`
 5. Previews of `docker-compose.yml`, `Makefile`, `make.bat`, and Bazel `BUILD` files will be printed to standard output.
 
+## CLI Reference
+
+### `mkconf`
+
+Generates build and environment configuration files.
+
+**Usage:**
+```bash
+mkconf [repo_path] [flags]
+```
+
+**Flags:**
+- `-o`, `--output string`: Output directory for generated files (defaults to repo_path)
+- `--no-test`: Skip running the project's test suite
+- `--dry-run`: Do not write files or build images, only print output
+- `-h`, `--help`: help for mkconf
+
 ## Supported Languages
 
 `mkconf` supports 40 programming languages and frameworks. For a comprehensive list, including default build commands and base images, please refer to the **Supported Languages** section in the [README.md](README.md).

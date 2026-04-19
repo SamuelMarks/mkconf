@@ -38,7 +38,9 @@ func TestScan(t *testing.T) {
 
 			for _, f := range tt.files {
 				err := os.WriteFile(filepath.Join(dir, f), []byte(""), 0644)
-				if err != nil { t.Fatalf("write error: %v", err) }
+				if err != nil {
+					t.Fatalf("write error: %v", err)
+				}
 			}
 
 			info, err := Scan(dir)
@@ -67,18 +69,18 @@ func TestScan(t *testing.T) {
 
 func TestFileExists(t *testing.T) {
 	tmpDir := t.TempDir()
-	
+
 	fpath := filepath.Join(tmpDir, "file.txt")
 	_ = os.WriteFile(fpath, []byte("test"), 0644)
-	
+
 	if !fileExists(fpath) {
 		t.Error("expected true for existing file")
 	}
-	
+
 	if fileExists(filepath.Join(tmpDir, "nonexistent.txt")) {
 		t.Error("expected false for nonexistent file")
 	}
-	
+
 	if fileExists(tmpDir) {
 		t.Error("expected false for directory")
 	}
@@ -86,7 +88,7 @@ func TestFileExists(t *testing.T) {
 
 func TestScanWalkError(t *testing.T) {
 	tmpDir := t.TempDir()
-	
+
 	// Create an unreadable directory to trigger filepath.Walk error
 	errDir := filepath.Join(tmpDir, "unreadable")
 	_ = os.Mkdir(errDir, 0000)

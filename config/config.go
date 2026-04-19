@@ -27,14 +27,14 @@ type DockerDef struct {
 
 // LanguageDef defines the properties and commands for a programming language.
 type LanguageDef struct {
-	Name                 string        `json:"name"`
-	Heuristics           HeuristicsDef `json:"heuristics"`
-	InstallCommand       string        `json:"install_command"`
-	BuildCommand         string        `json:"build_command"`
-	TestCommand          string        `json:"test_command"`
-	StartCommand         []string      `json:"start_command"`
-	IsCompiled           bool          `json:"is_compiled"`
-	Docker               DockerDef     `json:"docker"`
+	Name           string        `json:"name"`
+	Heuristics     HeuristicsDef `json:"heuristics"`
+	InstallCommand string        `json:"install_command"`
+	BuildCommand   string        `json:"build_command"`
+	TestCommand    string        `json:"test_command"`
+	StartCommand   []string      `json:"start_command"`
+	IsCompiled     bool          `json:"is_compiled"`
+	Docker         DockerDef     `json:"docker"`
 
 	// Fallback specific commands (optional)
 	FallbackBuildCommand string   `json:"fallback_build_command"`

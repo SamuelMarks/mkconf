@@ -9,7 +9,7 @@ import (
 func TestDockerCompose(t *testing.T) {
 	info := &scanner.ProjectInfo{}
 	compose := GenerateDockerCompose(info)
-	
+
 	if !strings.Contains(compose, "version: \"3.8\"") && !strings.Contains(compose, "version: '3.8'") && !strings.Contains(compose, "version: 3.8") {
 		t.Errorf("Expected Docker Compose output to contain version, got: %s", compose)
 	}

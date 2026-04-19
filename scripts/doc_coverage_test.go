@@ -2,8 +2,8 @@ package main
 
 import (
 	"os"
-	"testing"
 	"path/filepath"
+	"testing"
 )
 
 func TestRunCoverage(t *testing.T) {
@@ -14,13 +14,17 @@ func TestRunCoverage(t *testing.T) {
 	if cov < 0 || cov > 100 {
 		t.Errorf("Invalid coverage: %f", cov)
 	}
-	
+
 	err = os.MkdirAll("testdata_not_ignored", 0755)
-	if err != nil { t.Fatalf("mkdir error: %v", err) }
+	if err != nil {
+		t.Fatalf("mkdir error: %v", err)
+	}
 	badFile2 := filepath.Join("testdata_not_ignored", "bad.go")
 	err = os.WriteFile(badFile2, []byte("package bad\nfunc main() {\n"), 0644)
-	if err != nil { t.Fatalf("write error: %v", err) }
-	
+	if err != nil {
+		t.Fatalf("write error: %v", err)
+	}
+
 	_, err = run("testdata_not_ignored")
 	if err == nil {
 		t.Errorf("Expected parse error")
@@ -28,7 +32,9 @@ func TestRunCoverage(t *testing.T) {
 	os.RemoveAll("testdata_not_ignored")
 
 	err = os.MkdirAll("testdata_empty", 0755)
-	if err != nil { t.Fatalf("mkdir error: %v", err) }
+	if err != nil {
+		t.Fatalf("mkdir error: %v", err)
+	}
 	if err != nil {
 		t.Fatalf("MkdirAll failed: %v", err)
 	}

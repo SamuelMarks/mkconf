@@ -13,8 +13,16 @@ import (
 var osExit = os.Exit
 var outputDir string
 
+// noTest determines if the test suite should be skipped.
+var noTest bool
+
+// dryRun determines if file writes and image builds should be skipped.
+var dryRun bool
+
 func init() {
 	RootCmd.Flags().StringVarP(&outputDir, "output", "o", "", "Output directory for generated files (defaults to repo_path)")
+	RootCmd.Flags().BoolVar(&noTest, "no-test", false, "Skip running the project's test suite")
+	RootCmd.Flags().BoolVar(&dryRun, "dry-run", false, "Do not write files or build images, only print output")
 }
 
 // RootCmd is the main entry point for the application commands
@@ -43,8 +51,12 @@ var RootCmd = &cobra.Command{
 			fmt.Printf("Test Command: %s\n", info.TestCommand)
 		}
 
-		if err := project.RunTest(); err != nil {
-			fmt.Printf("Warning: Tests failed: %v\n", err)
+		if !noTest {
+			if err := project.RunTest(); err != nil {
+				fmt.Printf("Warning: Tests failed: %v\n", err)
+			}
+		} else {
+			fmt.Println("Skipping tests due to --no-test flag")
 		}
 
 		targetDir := outputDir
@@ -52,8 +64,10 @@ var RootCmd = &cobra.Command{
 			targetDir = path
 		}
 
-		if err := os.MkdirAll(targetDir, 0755); err != nil {
-			return fmt.Errorf("failed to create output directory: %v", err)
+		if !dryRun {
+			if err := os.MkdirAll(targetDir, 0755); err != nil {
+				return fmt.Errorf("failed to create output directory: %v", err)
+			}
 		}
 
 		baseImages := []string{"debian", "alpine", "distroless"}
@@ -61,15 +75,22 @@ var RootCmd = &cobra.Command{
 		for _, base := range baseImages {
 			dockerfile := project.GenerateDockerfile(base)
 			filePath := filepath.Join(targetDir, fmt.Sprintf("%s.Dockerfile", base))
-			if err := os.WriteFile(filePath, []byte(dockerfile), 0644); err != nil {
-				return fmt.Errorf("failed to write %s: %v", filePath, err)
-			}
-			fmt.Printf("Saved %s\n", filePath)
 
 			imageName := fmt.Sprintf("%s-%s", "app", base)
-			err = project.BuildImage(dockerfile, imageName)
-			if err != nil {
-				fmt.Printf("Failed to build %s: %v\n", imageName, err)
+
+			if dryRun {
+				fmt.Printf("Would save %s\n", filePath)
+				fmt.Printf("Would build %s\n", imageName)
+			} else {
+				if err := os.WriteFile(filePath, []byte(dockerfile), 0644); err != nil {
+					return fmt.Errorf("failed to write %s: %v", filePath, err)
+				}
+				fmt.Printf("Saved %s\n", filePath)
+
+				err = project.BuildImage(dockerfile, imageName)
+				if err != nil {
+					fmt.Printf("Failed to build %s: %v\n", imageName, err)
+				}
 			}
 		}
 
@@ -85,10 +106,14 @@ var RootCmd = &cobra.Command{
 
 		for _, f := range formats {
 			filePath := filepath.Join(targetDir, f.filename)
-			if err := os.WriteFile(filePath, []byte(f.content), 0644); err != nil {
-				return fmt.Errorf("failed to write %s: %v", filePath, err)
+			if dryRun {
+				fmt.Printf("Would save %s\n", filePath)
+			} else {
+				if err := os.WriteFile(filePath, []byte(f.content), 0644); err != nil {
+					return fmt.Errorf("failed to write %s: %v", filePath, err)
+				}
+				fmt.Printf("Saved %s\n", filePath)
 			}
-			fmt.Printf("Saved %s\n", filePath)
 		}
 
 		return nil

@@ -1,8 +1,9 @@
 `mkconf`
-======================
+========
 
 [![Test Coverage](https://img.shields.io/badge/Test_Coverage-100.0%25-brightgreen.svg)]()
 [![Doc Coverage](https://img.shields.io/badge/Doc_Coverage-100.0%25-brightgreen.svg)]()
+[![CI](https://github.com/SamuelMarks/mkconf/actions/workflows/ci.yml/badge.svg)](https://github.com/SamuelMarks/mkconf/actions/workflows/ci.yml)
 [![License](https://img.shields.io/badge/license-Apache--2.0%20OR%20MIT-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 
 `mkconf` is a powerful, automated CLI utility and Go SDK that seamlessly detects the language and framework of your repository to generate comprehensive build, deployment, and containerization configurations. Designed to be highly useful both with and without Docker, it can construct three types of optimized Docker images ([Debian](https://www.debian.org/)-based, [Alpine](https://alpinelinux.org/)-based, and [Distroless](https://github.com/GoogleContainerTools/distroless)) alongside Docker Compose environments, or work natively by scaffolding Makefiles and/or Bazel `BUILD` files. Built on an AST-powered generator, `mkconf` ensures reliability by automatically invoking your test suite and verifying builds before outputting anything.

@@ -42,10 +42,10 @@ func TestGenerateDockerfile(t *testing.T) {
 
 	// Uncompiled language distroless
 	nodeInfo := &scanner.ProjectInfo{
-		Language: "nodejs",
-		StartCommand: []string{"npm", "start"},
+		Language:       "nodejs",
+		StartCommand:   []string{"npm", "start"},
 		InstallCommand: "npm install",
-		BuildCommand: "npm run build",
+		BuildCommand:   "npm run build",
 	}
 	distrolessNode := GenerateDockerfile(nodeInfo, "distroless")
 	if !strings.Contains(distrolessNode, "CMD") {
@@ -62,7 +62,7 @@ func TestGenerateDockerfile(t *testing.T) {
 func TestGenerateDockerfileEmptyBase(t *testing.T) {
 	// Base image becomes empty when baseType is not recognized
 	info := &scanner.ProjectInfo{
-		Language:       "go",
+		Language: "go",
 	}
 	output := GenerateDockerfile(info, "unknown_base")
 	if !strings.Contains(output, "FROM ubuntu:22.04") {
@@ -72,8 +72,8 @@ func TestGenerateDockerfileEmptyBase(t *testing.T) {
 
 func TestGenerateDockerfileAlpinePackages(t *testing.T) {
 	info := &scanner.ProjectInfo{
-		Language:       "c",
-		StartCommand:   []string{"/app/app"},
+		Language:     "c",
+		StartCommand: []string{"/app/app"},
 	}
 	output := GenerateDockerfile(info, "alpine")
 	if !strings.Contains(output, "apk add --no-cache") {

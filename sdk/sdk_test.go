@@ -82,4 +82,3 @@ func TestNewError(t *testing.T) {
 		t.Errorf("Expected error for missing directory")
 	}
 }
-

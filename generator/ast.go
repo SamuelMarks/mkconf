@@ -14,7 +14,10 @@ func GenerateString(node *parser.Node) string {
 	}
 	var sb strings.Builder
 
-	for _, child := range node.Children {
+	for i, child := range node.Children {
+		if i > 0 && child.Value == "FROM" {
+			sb.WriteString("\n")
+		}
 		sb.WriteString(child.Value)
 		curr := child.Next
 		for curr != nil {

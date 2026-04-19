@@ -48,7 +48,9 @@ func TestMainSuccess(t *testing.T) {
 	resetFlags()
 	tmpDir := t.TempDir()
 	err := os.WriteFile(filepath.Join(tmpDir, "go.mod"), []byte(""), 0644)
-	if err != nil { t.Fatalf("write error: %v", err) }
+	if err != nil {
+		t.Fatalf("write error: %v", err)
+	}
 
 	builder.ExecCommand = fakeExecCommand
 
@@ -76,7 +78,9 @@ func TestMainFailureConditions(t *testing.T) {
 
 	// 2. Build failures, Test failures
 	err = os.WriteFile(filepath.Join(tmpDir, "go.mod"), []byte(""), 0644)
-	if err != nil { t.Fatalf("write error: %v", err) }
+	if err != nil {
+		t.Fatalf("write error: %v", err)
+	}
 	builder.ExecCommand = fakeExecCommandError
 	RootCmd.SetArgs([]string{tmpDir})
 	err = RootCmd.Execute()
@@ -135,7 +139,9 @@ func TestOutputDirectory(t *testing.T) {
 	tmpDir := t.TempDir()
 	outDir := filepath.Join(tmpDir, "out")
 	err := os.WriteFile(filepath.Join(tmpDir, "go.mod"), []byte(""), 0644)
-	if err != nil { t.Fatalf("write error: %v", err) }
+	if err != nil {
+		t.Fatalf("write error: %v", err)
+	}
 
 	builder.ExecCommand = fakeExecCommand
 
@@ -151,8 +157,8 @@ func TestOutputDirectory(t *testing.T) {
 
 	// Verify files were created
 	expectedFiles := []string{
-		"debian.Dockerfile", 
-		"alpine.Dockerfile", 
+		"debian.Dockerfile",
+		"alpine.Dockerfile",
 		"distroless.Dockerfile",
 		"docker-compose.yml",
 		"Makefile",
@@ -164,7 +170,7 @@ func TestOutputDirectory(t *testing.T) {
 			t.Errorf("expected file %s to be created in output dir", file)
 		}
 	}
-	
+
 	// Output directory creation failure test
 	resetFlags()
 	badOut := filepath.Join(tmpDir, "bad_out")
@@ -174,16 +180,18 @@ func TestOutputDirectory(t *testing.T) {
 	if err == nil {
 		t.Fatal("expected error from MkdirAll on existing file")
 	}
-	
+
 	// Dockerfile WriteFile failure test by setting read-only file
 	resetFlags()
 	readonlyFile := filepath.Join(tmpDir, "readonly_out")
 	_ = os.MkdirAll(readonlyFile, 0755)
-	
+
 	// create the debian.Dockerfile as a directory to force WriteFile failure
 	err = os.Mkdir(filepath.Join(readonlyFile, "debian.Dockerfile"), 0755)
-	if err != nil { t.Fatalf("mkdir error: %v", err) }
-	
+	if err != nil {
+		t.Fatalf("mkdir error: %v", err)
+	}
+
 	RootCmd.SetArgs([]string{"--output", readonlyFile, tmpDir})
 	err = RootCmd.Execute()
 	if err == nil {
@@ -195,13 +203,17 @@ func TestFormatWriteFailure(t *testing.T) {
 	resetFlags()
 	tmpDir := t.TempDir()
 	err := os.WriteFile(filepath.Join(tmpDir, "go.mod"), []byte(""), 0644)
-	if err != nil { t.Fatalf("write error: %v", err) }
+	if err != nil {
+		t.Fatalf("write error: %v", err)
+	}
 	builder.ExecCommand = fakeExecCommand
 
 	// Cause WriteFile to fail for docker-compose.yml by making it a directory
 	badFormatFile := filepath.Join(tmpDir, "docker-compose.yml")
 	err = os.Mkdir(badFormatFile, 0755)
-	if err != nil { t.Fatalf("mkdir error: %v", err) }
+	if err != nil {
+		t.Fatalf("mkdir error: %v", err)
+	}
 
 	RootCmd.SetArgs([]string{tmpDir}) // output to tmpDir (which contains the badFormatFile dir)
 	b := bytes.NewBufferString("")
@@ -210,5 +222,62 @@ func TestFormatWriteFailure(t *testing.T) {
 
 	err = RootCmd.Execute()
 	if err == nil {
-	        t.Fatal("expected error when writing to docker-compose.yml dir")
-	}}
+		t.Fatal("expected error when writing to docker-compose.yml dir")
+	}
+}
+
+func TestNoTestFlag(t *testing.T) {
+	resetFlags()
+	tmpDir := t.TempDir()
+	err := os.WriteFile(filepath.Join(tmpDir, "go.mod"), []byte(""), 0644)
+	if err != nil {
+		t.Fatalf("write error: %v", err)
+	}
+
+	builder.ExecCommand = fakeExecCommand
+	RootCmd.SetArgs([]string{"--no-test", tmpDir})
+	b := bytes.NewBufferString("")
+	RootCmd.SetOut(b)
+	RootCmd.SetErr(b)
+
+	err = RootCmd.Execute()
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+}
+
+func TestDryRunFlag(t *testing.T) {
+	resetFlags()
+	tmpDir := t.TempDir()
+	err := os.WriteFile(filepath.Join(tmpDir, "go.mod"), []byte(""), 0644)
+	if err != nil {
+		t.Fatalf("write error: %v", err)
+	}
+
+	builder.ExecCommand = fakeExecCommand
+	RootCmd.SetArgs([]string{"--dry-run", tmpDir})
+	b := bytes.NewBufferString("")
+	RootCmd.SetOut(b)
+	RootCmd.SetErr(b)
+
+	err = RootCmd.Execute()
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+
+	// Verify files were not created
+	expectedFiles := []string{
+		"debian.Dockerfile",
+		"alpine.Dockerfile",
+		"distroless.Dockerfile",
+		"docker-compose.yml",
+		"Makefile",
+		"make.bat",
+		"BUILD",
+	}
+	for _, file := range expectedFiles {
+		if _, err := os.Stat(filepath.Join(tmpDir, file)); !os.IsNotExist(err) {
+			t.Errorf("expected file %s to NOT be created in dry-run mode", file)
+		}
+	}
+}
