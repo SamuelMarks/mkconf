@@ -1,0 +1,41 @@
+name: CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Set up Go
+      uses: actions/setup-go@v5
+      with:
+        go-version-file: 'go.mod'
+
+    - name: Install golangci-lint
+      run: curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b $(go env GOPATH)/bin v1.56.2
+
+    - name: Lint
+      run: golangci-lint run ./...
+
+    - name: Test and Coverage
+      run: |
+        go test -v -coverprofile=coverage.out ./...
+        go tool cover -func=coverage.out | awk '/^total:/ { print $3 }' > coverage.txt
+        if [ "$(cat coverage.txt)" != "100.0%" ]; then
+          echo "Test coverage is not 100% (it is $(cat coverage.txt))"
+          exit 1
+        fi
+
+    - name: Doc Coverage
+      run: |
+        doc_cov=$(go run scripts/doc_coverage.go)
+        if [ "$doc_cov" != "100.0" ]; then
+          echo "Doc coverage is not 100% (it is $doc_cov)"
+          exit 1
+        fi

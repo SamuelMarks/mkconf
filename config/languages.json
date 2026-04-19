@@ -1,0 +1,1130 @@
+[
+  {
+    "name": "awk",
+    "start_command": [
+      "awk",
+      "-f",
+      "main.awk"
+    ],
+    "fallback_start_command": [
+      "awk",
+      "-f",
+      "{{FILE}}"
+    ],
+    "is_compiled": false,
+    "heuristics": {
+      "primary": [],
+      "fallback": [
+        "*.awk"
+      ]
+    },
+    "docker": {
+      "debian_image": "debian:bookworm-slim",
+      "alpine_image": "alpine:3.19",
+      "distroless_builder_image": "debian:bookworm-slim",
+      "distroless_image": "gcr.io/distroless/base-debian12"
+    }
+  },
+  {
+    "name": "bash",
+    "start_command": [
+      "bash",
+      "main.sh"
+    ],
+    "fallback_start_command": [
+      "bash",
+      "{{FILE}}"
+    ],
+    "is_compiled": false,
+    "heuristics": {
+      "primary": [],
+      "fallback": [
+        "*.sh",
+        "*.bash"
+      ]
+    },
+    "docker": {
+      "debian_image": "bash:5.2",
+      "alpine_image": "bash:5.2-alpine",
+      "distroless_builder_image": "bash:5.2",
+      "distroless_image": "gcr.io/distroless/base-debian12"
+    }
+  },
+  {
+    "name": "bun",
+    "install_command": "bun install",
+    "test_command": "bun test",
+    "start_command": [
+      "bun",
+      "run",
+      "index.ts"
+    ],
+    "is_compiled": false,
+    "heuristics": {
+      "primary": [
+        "bunfig.toml"
+      ],
+      "fallback": []
+    },
+    "docker": {
+      "debian_image": "oven/bun:debian",
+      "alpine_image": "oven/bun:alpine",
+      "distroless_builder_image": "oven/bun:debian",
+      "distroless_image": "oven/bun:distroless"
+    }
+  },
+  {
+    "name": "bun",
+    "install_command": "bun install",
+    "test_command": "bun test",
+    "start_command": [
+      "bun",
+      "run",
+      "index.ts"
+    ],
+    "is_compiled": false,
+    "heuristics": {
+      "primary": [
+        "bunfig.toml"
+      ],
+      "fallback": []
+    },
+    "docker": {
+      "debian_image": "oven/bun:debian",
+      "alpine_image": "oven/bun:alpine",
+      "distroless_builder_image": "oven/bun:debian",
+      "distroless_image": "oven/bun:distroless"
+    }
+  },
+  {
+    "name": "c",
+    "build_command": "make",
+    "test_command": "make test",
+    "start_command": [
+      "/app/app"
+    ],
+    "fallback_build_command": "gcc -o app *.c",
+    "is_compiled": true,
+    "heuristics": {
+      "primary": [
+        "Makefile"
+      ],
+      "fallback": [
+        "*.c"
+      ]
+    },
+    "docker": {
+      "debian_image": "gcc:13-bookworm",
+      "alpine_image": "alpine:3.19",
+      "distroless_builder_image": "gcc:13-bookworm",
+      "distroless_image": "gcr.io/distroless/cc-debian12",
+      "alpine_packages": [
+        "gcc",
+        "g++",
+        "make",
+        "cmake"
+      ]
+    }
+  },
+  {
+    "name": "c#",
+    "build_command": "dotnet build",
+    "test_command": "dotnet test",
+    "start_command": [
+      "dotnet",
+      "run"
+    ],
+    "is_compiled": true,
+    "heuristics": {
+      "primary": [],
+      "fallback": [
+        "*.cs"
+      ]
+    },
+    "docker": {
+      "debian_image": "dotnet/sdk:8.0",
+      "alpine_image": "mcr.microsoft.com/dotnet/sdk:8.0-alpine",
+      "distroless_builder_image": "mcr.microsoft.com/dotnet/sdk:8.0",
+      "distroless_image": "mcr.microsoft.com/dotnet/aspnet:8.0"
+    }
+  },
+  {
+    "name": "c++",
+    "build_command": "cmake . && make",
+    "test_command": "make test",
+    "start_command": [
+      "/app/app"
+    ],
+    "fallback_build_command": "g++ -o app *.cpp",
+    "is_compiled": true,
+    "heuristics": {
+      "primary": [
+        "CMakeLists.txt"
+      ],
+      "fallback": [
+        "*.cpp",
+        "*.cc"
+      ]
+    },
+    "docker": {
+      "debian_image": "gcc:13-bookworm",
+      "alpine_image": "alpine:3.19",
+      "distroless_builder_image": "gcc:13-bookworm",
+      "distroless_image": "gcr.io/distroless/cc-debian12",
+      "alpine_packages": [
+        "gcc",
+        "g++",
+        "make",
+        "cmake"
+      ]
+    }
+  },
+  {
+    "name": "clojure",
+    "build_command": "lein uberjar",
+    "test_command": "lein test",
+    "start_command": [
+      "java",
+      "-jar",
+      "target/app.jar"
+    ],
+    "is_compiled": true,
+    "heuristics": {
+      "primary": [
+        "project.clj"
+      ],
+      "fallback": [
+        "*.clj",
+        "*.cljs",
+        "*.cljc"
+      ]
+    },
+    "docker": {
+      "debian_image": "clojure:temurin-21-lein-jammy",
+      "alpine_image": "clojure:temurin-21-lein-alpine",
+      "distroless_builder_image": "clojure:temurin-21-lein-jammy",
+      "distroless_image": "gcr.io/distroless/java21-debian12"
+    }
+  },
+  {
+    "name": "crystal",
+    "build_command": "crystal build --release src/app.cr",
+    "test_command": "crystal spec",
+    "start_command": [
+      "/app/app"
+    ],
+    "is_compiled": true,
+    "heuristics": {
+      "primary": [
+        "shard.yml"
+      ],
+      "fallback": [
+        "*.cr"
+      ]
+    },
+    "docker": {
+      "debian_image": "crystallang/crystal:1.12",
+      "alpine_image": "crystallang/crystal:1.12-alpine",
+      "distroless_builder_image": "crystallang/crystal:1.12",
+      "distroless_image": "gcr.io/distroless/cc-debian12"
+    }
+  },
+  {
+    "name": "d",
+    "build_command": "dub build --build=release",
+    "test_command": "dub test",
+    "start_command": [
+      "/app/app"
+    ],
+    "is_compiled": true,
+    "heuristics": {
+      "primary": [
+        "dub.json",
+        "dub.sdl"
+      ],
+      "fallback": [
+        "*.d"
+      ]
+    },
+    "docker": {
+      "debian_image": "dlang2/dmd-ubuntu:2.107.1",
+      "alpine_image": "alpine:3.19",
+      "distroless_builder_image": "dlang2/dmd-ubuntu:2.107.1",
+      "distroless_image": "gcr.io/distroless/cc-debian12",
+      "alpine_packages": [
+        "gcc",
+        "dmd",
+        "dub"
+      ]
+    }
+  },
+  {
+    "name": "dart",
+    "install_command": "dart pub get",
+    "test_command": "dart test",
+    "start_command": [
+      "dart",
+      "run"
+    ],
+    "fallback_start_command": [
+      "dart",
+      "run",
+      "{{FILE}}"
+    ],
+    "is_compiled": false,
+    "heuristics": {
+      "primary": [
+        "pubspec.yaml"
+      ],
+      "fallback": [
+        "*.dart"
+      ]
+    },
+    "docker": {
+      "debian_image": "dart:stable",
+      "alpine_image": "dart:stable",
+      "distroless_builder_image": "dart:stable",
+      "distroless_image": "gcr.io/distroless/base-debian12"
+    }
+  },
+  {
+    "name": "deno",
+    "test_command": "deno test -A",
+    "start_command": [
+      "deno",
+      "run",
+      "-A",
+      "main.ts"
+    ],
+    "is_compiled": false,
+    "heuristics": {
+      "primary": [
+        "deno.json",
+        "deno.jsonc"
+      ],
+      "fallback": []
+    },
+    "docker": {
+      "debian_image": "denoland/deno:latest",
+      "alpine_image": "denoland/deno:alpine",
+      "distroless_builder_image": "denoland/deno:latest",
+      "distroless_image": "denoland/deno:distroless"
+    }
+  },
+  {
+    "name": "deno",
+    "test_command": "deno test -A",
+    "start_command": [
+      "deno",
+      "run",
+      "-A",
+      "main.ts"
+    ],
+    "is_compiled": false,
+    "heuristics": {
+      "primary": [
+        "deno.json",
+        "deno.jsonc"
+      ],
+      "fallback": []
+    },
+    "docker": {
+      "debian_image": "denoland/deno:latest",
+      "alpine_image": "denoland/deno:alpine",
+      "distroless_builder_image": "denoland/deno:latest",
+      "distroless_image": "denoland/deno:distroless"
+    }
+  },
+  {
+    "name": "elixir",
+    "install_command": "mix deps.get",
+    "build_command": "mix compile",
+    "test_command": "mix test",
+    "start_command": [
+      "mix",
+      "run",
+      "--no-halt"
+    ],
+    "is_compiled": true,
+    "heuristics": {
+      "primary": [
+        "mix.exs"
+      ],
+      "fallback": [
+        "*.ex",
+        "*.exs"
+      ]
+    },
+    "docker": {
+      "debian_image": "elixir:1.16",
+      "alpine_image": "elixir:1.16-alpine",
+      "distroless_builder_image": "elixir:1.16",
+      "distroless_image": "cgr.dev/chainguard/elixir"
+    }
+  },
+  {
+    "name": "erlang",
+    "build_command": "rebar3 compile",
+    "test_command": "rebar3 eunit",
+    "start_command": [
+      "rebar3",
+      "shell"
+    ],
+    "is_compiled": true,
+    "heuristics": {
+      "primary": [
+        "rebar.config"
+      ],
+      "fallback": [
+        "*.erl"
+      ]
+    },
+    "docker": {
+      "debian_image": "erlang:26",
+      "alpine_image": "erlang:26-alpine",
+      "distroless_builder_image": "erlang:26",
+      "distroless_image": "gcr.io/distroless/base-debian12"
+    }
+  },
+  {
+    "name": "f#",
+    "build_command": "dotnet build",
+    "test_command": "dotnet test",
+    "start_command": [
+      "dotnet",
+      "run"
+    ],
+    "is_compiled": true,
+    "heuristics": {
+      "primary": [
+        "*.fsproj"
+      ],
+      "fallback": [
+        "*.fs"
+      ]
+    },
+    "docker": {
+      "debian_image": "mcr.microsoft.com/dotnet/sdk:8.0",
+      "alpine_image": "mcr.microsoft.com/dotnet/sdk:8.0-alpine",
+      "distroless_builder_image": "mcr.microsoft.com/dotnet/sdk:8.0",
+      "distroless_image": "mcr.microsoft.com/dotnet/aspnet:8.0"
+    }
+  },
+  {
+    "name": "fortran",
+    "build_command": "gfortran -o app *.f90",
+    "test_command": "gfortran -o test *.f90 && ./test",
+    "start_command": [
+      "/app/app"
+    ],
+    "is_compiled": true,
+    "heuristics": {
+      "primary": [],
+      "fallback": [
+        "*.f90",
+        "*.f",
+        "*.f03"
+      ]
+    },
+    "docker": {
+      "debian_image": "gcc:13-bookworm",
+      "alpine_image": "alpine:3.19",
+      "distroless_builder_image": "gcc:13-bookworm",
+      "distroless_image": "gcr.io/distroless/cc-debian12",
+      "alpine_packages": [
+        "gfortran",
+        "make",
+        "g++",
+        "gcc"
+      ]
+    }
+  },
+  {
+    "name": "gleam",
+    "build_command": "gleam build",
+    "test_command": "gleam test",
+    "start_command": [
+      "gleam",
+      "run"
+    ],
+    "is_compiled": true,
+    "heuristics": {
+      "primary": [
+        "gleam.toml"
+      ],
+      "fallback": [
+        "*.gleam"
+      ]
+    },
+    "docker": {
+      "debian_image": "ghcr.io/gleam-lang/gleam:v1.0.0",
+      "alpine_image": "ghcr.io/gleam-lang/gleam:v1.0.0-erlang-alpine",
+      "distroless_builder_image": "ghcr.io/gleam-lang/gleam:v1.0.0",
+      "distroless_image": "gcr.io/distroless/cc-debian12"
+    }
+  },
+  {
+    "name": "go",
+    "build_command": "go build -o app",
+    "test_command": "go test ./...",
+    "start_command": [
+      "/app/app"
+    ],
+    "is_compiled": true,
+    "heuristics": {
+      "primary": [
+        "go.mod"
+      ],
+      "fallback": [
+        "*.go"
+      ]
+    },
+    "docker": {
+      "debian_image": "golang:1.22-bookworm",
+      "alpine_image": "golang:1.22-alpine",
+      "distroless_builder_image": "golang:1.22-bookworm",
+      "distroless_image": "gcr.io/distroless/static-debian12"
+    }
+  },
+  {
+    "name": "groovy",
+    "start_command": [
+      "groovy",
+      "main.groovy"
+    ],
+    "fallback_start_command": [
+      "groovy",
+      "{{FILE}}"
+    ],
+    "is_compiled": false,
+    "heuristics": {
+      "primary": [],
+      "fallback": [
+        "*.groovy"
+      ]
+    },
+    "docker": {
+      "debian_image": "groovy:4-jdk21",
+      "alpine_image": "groovy:4-jdk21-alpine",
+      "distroless_builder_image": "groovy:4-jdk21",
+      "distroless_image": "gcr.io/distroless/java21-debian12"
+    }
+  },
+  {
+    "name": "haskell",
+    "build_command": "stack build",
+    "test_command": "stack test",
+    "start_command": [
+      "stack",
+      "run"
+    ],
+    "is_compiled": true,
+    "heuristics": {
+      "primary": [
+        "stack.yaml"
+      ],
+      "fallback": [
+        "*.hs"
+      ]
+    },
+    "docker": {
+      "debian_image": "haskell:9",
+      "alpine_image": "haskell:9-alpine",
+      "distroless_builder_image": "haskell:9",
+      "distroless_image": "gcr.io/distroless/cc-debian12"
+    }
+  },
+  {
+    "name": "haxe",
+    "build_command": "haxe build.hxml",
+    "test_command": "haxe --run TestMain",
+    "start_command": [
+      "node",
+      "main.js"
+    ],
+    "is_compiled": true,
+    "heuristics": {
+      "primary": [
+        "build.hxml"
+      ],
+      "fallback": [
+        "*.hx"
+      ]
+    },
+    "docker": {
+      "debian_image": "haxe:4.3.2",
+      "alpine_image": "haxe:4.3.2-alpine",
+      "distroless_builder_image": "haxe:4.3.2",
+      "distroless_image": "gcr.io/distroless/nodejs20-debian12"
+    }
+  },
+  {
+    "name": "java",
+    "build_command": "mvn package",
+    "test_command": "mvn test",
+    "start_command": [
+      "java",
+      "-jar",
+      "target/app.jar"
+    ],
+    "fallback_build_command": "javac *.java",
+    "fallback_start_command": [
+      "java",
+      "Main"
+    ],
+    "is_compiled": false,
+    "heuristics": {
+      "primary": [
+        "pom.xml"
+      ],
+      "fallback": [
+        "*.java"
+      ]
+    },
+    "docker": {
+      "debian_image": "eclipse-temurin:17-jre",
+      "alpine_image": "eclipse-temurin:17-jre-alpine",
+      "distroless_builder_image": "maven:3.9-eclipse-temurin-17",
+      "distroless_image": "gcr.io/distroless/java17-debian12"
+    }
+  },
+  {
+    "name": "julia",
+    "start_command": [
+      "julia",
+      "main.jl"
+    ],
+    "fallback_start_command": [
+      "julia",
+      "{{FILE}}"
+    ],
+    "is_compiled": false,
+    "heuristics": {
+      "primary": [
+        "Project.toml"
+      ],
+      "fallback": [
+        "*.jl"
+      ]
+    },
+    "docker": {
+      "debian_image": "julia:1.10-bookworm",
+      "alpine_image": "julia:1.10-alpine",
+      "distroless_builder_image": "julia:1.10-bookworm",
+      "distroless_image": "cgr.dev/chainguard/julia"
+    }
+  },
+  {
+    "name": "kotlin",
+    "build_command": "kotlinc *.kt -include-runtime -d app.jar",
+    "test_command": "kotlinc *.kt -include-runtime -d app.jar",
+    "start_command": [
+      "java",
+      "-jar",
+      "app.jar"
+    ],
+    "is_compiled": true,
+    "heuristics": {
+      "primary": [],
+      "fallback": [
+        "*.kt",
+        "*.kts"
+      ]
+    },
+    "docker": {
+      "debian_image": "eclipse-temurin:21-jdk",
+      "alpine_image": "eclipse-temurin:21-jdk-alpine",
+      "distroless_builder_image": "eclipse-temurin:21-jdk",
+      "distroless_image": "gcr.io/distroless/java21-debian12"
+    }
+  },
+  {
+    "name": "lua",
+    "start_command": [
+      "lua",
+      "main.lua"
+    ],
+    "fallback_start_command": [
+      "lua",
+      "{{FILE}}"
+    ],
+    "is_compiled": false,
+    "heuristics": {
+      "primary": [],
+      "fallback": [
+        "*.lua"
+      ]
+    },
+    "docker": {
+      "debian_image": "lua:5.4",
+      "alpine_image": "lua:5.4-alpine",
+      "distroless_builder_image": "lua:5.4",
+      "distroless_image": "cgr.dev/chainguard/lua"
+    }
+  },
+  {
+    "name": "nim",
+    "build_command": "nimble build -y -d:release",
+    "test_command": "nimble test",
+    "start_command": [
+      "/app/app"
+    ],
+    "is_compiled": true,
+    "heuristics": {
+      "primary": [
+        "*.nimble"
+      ],
+      "fallback": [
+        "*.nim",
+        "*.nimble"
+      ]
+    },
+    "docker": {
+      "debian_image": "nimlang/nim:2.0.4",
+      "alpine_image": "nimlang/nim:2.0.4-alpine",
+      "distroless_builder_image": "nimlang/nim:2.0.4",
+      "distroless_image": "gcr.io/distroless/cc-debian12"
+    }
+  },
+  {
+    "name": "nodejs",
+    "install_command": "npm install",
+    "test_command": "npm test",
+    "start_command": [
+      "npm",
+      "start"
+    ],
+    "fallback_start_command": [
+      "node",
+      "{{FILE}}"
+    ],
+    "is_compiled": false,
+    "heuristics": {
+      "primary": [
+        "package.json"
+      ],
+      "fallback": [
+        "*.js",
+        "*.ts"
+      ]
+    },
+    "docker": {
+      "debian_image": "node:20-bookworm",
+      "alpine_image": "node:20-alpine",
+      "distroless_builder_image": "node:20-bookworm",
+      "distroless_image": "gcr.io/distroless/nodejs20-debian12"
+    }
+  },
+  {
+    "name": "ocaml",
+    "build_command": "dune build",
+    "test_command": "dune runtest",
+    "start_command": [
+      "dune",
+      "exec",
+      "./bin/main.exe"
+    ],
+    "is_compiled": true,
+    "heuristics": {
+      "primary": [
+        "dune-project"
+      ],
+      "fallback": [
+        "*.ml"
+      ]
+    },
+    "docker": {
+      "debian_image": "ocaml/opam:debian",
+      "alpine_image": "ocaml/opam:alpine",
+      "distroless_builder_image": "ocaml/opam:debian",
+      "distroless_image": "gcr.io/distroless/cc-debian12"
+    }
+  },
+  {
+    "name": "perl",
+    "start_command": [
+      "perl",
+      "main.pl"
+    ],
+    "fallback_start_command": [
+      "perl",
+      "{{FILE}}"
+    ],
+    "is_compiled": false,
+    "heuristics": {
+      "primary": [],
+      "fallback": [
+        "*.pl",
+        "*.pm"
+      ]
+    },
+    "docker": {
+      "debian_image": "perl:5.38",
+      "alpine_image": "perl:5.38-alpine",
+      "distroless_builder_image": "perl:5.38",
+      "distroless_image": "gcr.io/distroless/base-debian12"
+    }
+  },
+  {
+    "name": "php",
+    "install_command": "composer install",
+    "test_command": "phpunit",
+    "start_command": [
+      "php",
+      "-S",
+      "0.0.0.0:8000"
+    ],
+    "fallback_start_command": [
+      "php",
+      "{{FILE}}"
+    ],
+    "is_compiled": false,
+    "heuristics": {
+      "primary": [
+        "composer.json"
+      ],
+      "fallback": [
+        "*.php"
+      ]
+    },
+    "docker": {
+      "debian_image": "php:8.2-cli",
+      "alpine_image": "php:8.2-cli-alpine",
+      "distroless_builder_image": "php:8.2-cli",
+      "distroless_image": "cgr.dev/chainguard/php"
+    }
+  },
+  {
+    "name": "powershell",
+    "start_command": [
+      "pwsh",
+      "main.ps1"
+    ],
+    "fallback_start_command": [
+      "pwsh",
+      "{{FILE}}"
+    ],
+    "is_compiled": false,
+    "heuristics": {
+      "primary": [],
+      "fallback": [
+        "*.ps1",
+        "*.psm1",
+        "*.psd1"
+      ]
+    },
+    "docker": {
+      "debian_image": "mcr.microsoft.com/powershell:lts-debian-11",
+      "alpine_image": "mcr.microsoft.com/powershell:lts-alpine-3.17",
+      "distroless_builder_image": "mcr.microsoft.com/powershell:lts-debian-11",
+      "distroless_image": "gcr.io/distroless/base-debian12"
+    }
+  },
+  {
+    "name": "python",
+    "install_command": "pip install -r requirements.txt",
+    "test_command": "python -m unittest discover",
+    "start_command": [
+      "python",
+      "main.py"
+    ],
+    "fallback_start_command": [
+      "python",
+      "{{FILE}}"
+    ],
+    "is_compiled": false,
+    "heuristics": {
+      "primary": [
+        "requirements.txt"
+      ],
+      "fallback": [
+        "*.py"
+      ]
+    },
+    "docker": {
+      "debian_image": "python:3.11-bookworm",
+      "alpine_image": "python:3.11-alpine",
+      "distroless_builder_image": "python:3.11-bookworm",
+      "distroless_image": "gcr.io/distroless/python3-debian12"
+    }
+  },
+  {
+    "name": "r",
+    "start_command": [
+      "Rscript",
+      "main.R"
+    ],
+    "fallback_start_command": [
+      "Rscript",
+      "{{FILE}}"
+    ],
+    "is_compiled": false,
+    "heuristics": {
+      "primary": [],
+      "fallback": [
+        "*.r"
+      ]
+    },
+    "docker": {
+      "debian_image": "r-base:4.3.3",
+      "alpine_image": "alpine:3.19",
+      "distroless_builder_image": "r-base:4.3.3",
+      "distroless_image": "gcr.io/distroless/base-debian12"
+    }
+  },
+  {
+    "name": "racket",
+    "start_command": [
+      "racket",
+      "main.rkt"
+    ],
+    "fallback_start_command": [
+      "racket",
+      "{{FILE}}"
+    ],
+    "is_compiled": false,
+    "heuristics": {
+      "primary": [
+        "info.rkt"
+      ],
+      "fallback": [
+        "*.rkt"
+      ]
+    },
+    "docker": {
+      "debian_image": "racket/racket:8.11-full",
+      "alpine_image": "alpine:3.19",
+      "distroless_builder_image": "racket/racket:8.11-full",
+      "distroless_image": "gcr.io/distroless/base-debian12",
+      "alpine_packages": [
+        "racket"
+      ]
+    }
+  },
+  {
+    "name": "racket",
+    "start_command": [
+      "racket",
+      "main.rkt"
+    ],
+    "fallback_start_command": [
+      "racket",
+      "{{FILE}}"
+    ],
+    "is_compiled": false,
+    "heuristics": {
+      "primary": [
+        "info.rkt"
+      ],
+      "fallback": [
+        "*.rkt"
+      ]
+    },
+    "docker": {
+      "debian_image": "racket/racket:8.11-full",
+      "alpine_image": "alpine:3.19",
+      "distroless_builder_image": "racket/racket:8.11-full",
+      "distroless_image": "gcr.io/distroless/base-debian12",
+      "alpine_packages": [
+        "racket"
+      ]
+    }
+  },
+  {
+    "name": "ruby",
+    "install_command": "bundle install",
+    "test_command": "bundle exec rspec",
+    "start_command": [
+      "ruby",
+      "main.rb"
+    ],
+    "fallback_test_command": "ruby test.rb",
+    "fallback_start_command": [
+      "ruby",
+      "{{FILE}}"
+    ],
+    "is_compiled": false,
+    "heuristics": {
+      "primary": [
+        "Gemfile"
+      ],
+      "fallback": [
+        "*.rb"
+      ]
+    },
+    "docker": {
+      "debian_image": "ruby:3.3-bookworm",
+      "alpine_image": "ruby:3.3-alpine",
+      "distroless_builder_image": "ruby:3.3-bookworm",
+      "distroless_image": "cgr.dev/chainguard/ruby"
+    }
+  },
+  {
+    "name": "rust",
+    "build_command": "cargo build --release",
+    "test_command": "cargo test",
+    "start_command": [
+      "/app/app"
+    ],
+    "is_compiled": true,
+    "heuristics": {
+      "primary": [
+        "Cargo.toml"
+      ],
+      "fallback": [
+        "*.rs"
+      ]
+    },
+    "docker": {
+      "debian_image": "rust:1-bookworm",
+      "alpine_image": "rust:1-alpine",
+      "distroless_builder_image": "rust:1-bookworm",
+      "distroless_image": "gcr.io/distroless/cc-debian12"
+    }
+  },
+  {
+    "name": "scala",
+    "build_command": "sbt compile",
+    "test_command": "sbt test",
+    "start_command": [
+      "sbt",
+      "run"
+    ],
+    "is_compiled": true,
+    "heuristics": {
+      "primary": [
+        "build.sbt"
+      ],
+      "fallback": [
+        "*.scala"
+      ]
+    },
+    "docker": {
+      "debian_image": "sbtscala/scala-sbt:eclipse-temurin-jammy-21.0.2_13_1.9.9_3.4.1",
+      "alpine_image": "sbtscala/scala-sbt:eclipse-temurin-alpine-21.0.2_13_1.9.9_3.4.1",
+      "distroless_builder_image": "sbtscala/scala-sbt:eclipse-temurin-jammy-21.0.2_13_1.9.9_3.4.1",
+      "distroless_image": "gcr.io/distroless/java21-debian12"
+    }
+  },
+  {
+    "name": "swift",
+    "build_command": "swift build -c release",
+    "test_command": "swift test",
+    "start_command": [
+      ".build/release/app"
+    ],
+    "is_compiled": true,
+    "heuristics": {
+      "primary": [],
+      "fallback": [
+        "*.swift"
+      ]
+    },
+    "docker": {
+      "debian_image": "swift:5.10-noble",
+      "alpine_image": "swift:5.10-slim",
+      "distroless_builder_image": "swift:5.10-noble",
+      "distroless_image": "gcr.io/distroless/cc-debian12"
+    }
+  },
+  {
+    "name": "tcl",
+    "start_command": [
+      "tclsh",
+      "main.tcl"
+    ],
+    "fallback_start_command": [
+      "tclsh",
+      "{{FILE}}"
+    ],
+    "is_compiled": false,
+    "heuristics": {
+      "primary": [],
+      "fallback": [
+        "*.tcl"
+      ]
+    },
+    "docker": {
+      "debian_image": "debian:bookworm-slim",
+      "alpine_image": "alpine:3.19",
+      "distroless_builder_image": "debian:bookworm-slim",
+      "distroless_image": "gcr.io/distroless/base-debian12",
+      "alpine_packages": [
+        "tcl"
+      ]
+    }
+  },
+  {
+    "name": "tcl",
+    "start_command": [
+      "tclsh",
+      "main.tcl"
+    ],
+    "fallback_start_command": [
+      "tclsh",
+      "{{FILE}}"
+    ],
+    "is_compiled": false,
+    "heuristics": {
+      "primary": [],
+      "fallback": [
+        "*.tcl"
+      ]
+    },
+    "docker": {
+      "debian_image": "debian:bookworm-slim",
+      "alpine_image": "alpine:3.19",
+      "distroless_builder_image": "debian:bookworm-slim",
+      "distroless_image": "gcr.io/distroless/base-debian12",
+      "alpine_packages": [
+        "tcl"
+      ]
+    }
+  },
+  {
+    "name": "v",
+    "build_command": "v .",
+    "test_command": "v test .",
+    "start_command": [
+      "/app/app"
+    ],
+    "is_compiled": true,
+    "heuristics": {
+      "primary": [
+        "v.mod"
+      ],
+      "fallback": [
+        "*.v"
+      ]
+    },
+    "docker": {
+      "debian_image": "thevlang/vlang:alpine",
+      "alpine_image": "alpine:3.19",
+      "distroless_builder_image": "thevlang/vlang:alpine",
+      "distroless_image": "gcr.io/distroless/static-debian12"
+    }
+  },
+  {
+    "name": "zig",
+    "build_command": "zig build -Doptimize=ReleaseSafe",
+    "test_command": "zig build test",
+    "start_command": [
+      "zig-out/bin/app"
+    ],
+    "is_compiled": true,
+    "heuristics": {
+      "primary": [
+        "build.zig"
+      ],
+      "fallback": [
+        "*.zig"
+      ]
+    },
+    "docker": {
+      "debian_image": "ziglang/zig:0.12.0",
+      "alpine_image": "alpine:3.21",
+      "distroless_builder_image": "ziglang/zig:0.12.0",
+      "distroless_image": "gcr.io/distroless/cc-debian12"
+    }
+  }
+]

@@ -1,0 +1,38 @@
+# Binaries for programs and plugins
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+
+# Test binary, built with `go test -c`
+*.test
+
+# Output of the go coverage tool
+*.out
+coverage.*
+
+# Dependency directories
+vendor/
+
+# IDEs
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# OS files
+.DS_Store
+
+# Executables
+app
+/mkconf
+
+# Temporary Patch / Script Files
+*.js
+*.sh
+*.html
+!README.md
+!ARCHITECTURE.md
+!USAGE.md
+coverage.out
