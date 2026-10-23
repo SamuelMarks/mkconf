@@ -74,29 +74,6 @@
     }
   },
   {
-    "name": "bun",
-    "install_command": "bun install",
-    "test_command": "bun test",
-    "start_command": [
-      "bun",
-      "run",
-      "index.ts"
-    ],
-    "is_compiled": false,
-    "heuristics": {
-      "primary": [
-        "bunfig.toml"
-      ],
-      "fallback": []
-    },
-    "docker": {
-      "debian_image": "oven/bun:debian",
-      "alpine_image": "oven/bun:alpine",
-      "distroless_builder_image": "oven/bun:debian",
-      "distroless_image": "oven/bun:distroless"
-    }
-  },
-  {
     "name": "c",
     "build_command": "make",
     "test_command": "make test",
@@ -142,7 +119,7 @@
       ]
     },
     "docker": {
-      "debian_image": "dotnet/sdk:8.0",
+      "debian_image": "mcr.microsoft.com/dotnet/sdk:8.0",
       "alpine_image": "mcr.microsoft.com/dotnet/sdk:8.0-alpine",
       "distroless_builder_image": "mcr.microsoft.com/dotnet/sdk:8.0",
       "distroless_image": "mcr.microsoft.com/dotnet/aspnet:8.0"
@@ -285,30 +262,6 @@
       "alpine_image": "dart:stable",
       "distroless_builder_image": "dart:stable",
       "distroless_image": "gcr.io/distroless/base-debian12"
-    }
-  },
-  {
-    "name": "deno",
-    "test_command": "deno test -A",
-    "start_command": [
-      "deno",
-      "run",
-      "-A",
-      "main.ts"
-    ],
-    "is_compiled": false,
-    "heuristics": {
-      "primary": [
-        "deno.json",
-        "deno.jsonc"
-      ],
-      "fallback": []
-    },
-    "docker": {
-      "debian_image": "denoland/deno:latest",
-      "alpine_image": "denoland/deno:alpine",
-      "distroless_builder_image": "denoland/deno:latest",
-      "distroless_image": "denoland/deno:distroless"
     }
   },
   {
@@ -582,10 +535,10 @@
       ]
     },
     "docker": {
-      "debian_image": "eclipse-temurin:17-jre",
-      "alpine_image": "eclipse-temurin:17-jre-alpine",
-      "distroless_builder_image": "maven:3.9-eclipse-temurin-17",
-      "distroless_image": "gcr.io/distroless/java17-debian12"
+      "debian_image": "eclipse-temurin:21-jdk",
+      "alpine_image": "eclipse-temurin:21-jdk-alpine",
+      "distroless_builder_image": "maven:3.9-eclipse-temurin-21",
+      "distroless_image": "gcr.io/distroless/java21-debian12"
     }
   },
   {
@@ -617,7 +570,7 @@
   {
     "name": "kotlin",
     "build_command": "kotlinc *.kt -include-runtime -d app.jar",
-    "test_command": "kotlinc *.kt -include-runtime -d app.jar",
+    "test_command": "kotlinc *.kt -include-runtime -d test.jar && java -jar test.jar",
     "start_command": [
       "java",
       "-jar",
@@ -675,8 +628,7 @@
         "*.nimble"
       ],
       "fallback": [
-        "*.nim",
-        "*.nimble"
+        "*.nim"
       ]
     },
     "docker": {
@@ -902,35 +854,6 @@
     }
   },
   {
-    "name": "racket",
-    "start_command": [
-      "racket",
-      "main.rkt"
-    ],
-    "fallback_start_command": [
-      "racket",
-      "{{FILE}}"
-    ],
-    "is_compiled": false,
-    "heuristics": {
-      "primary": [
-        "info.rkt"
-      ],
-      "fallback": [
-        "*.rkt"
-      ]
-    },
-    "docker": {
-      "debian_image": "racket/racket:8.11-full",
-      "alpine_image": "alpine:3.19",
-      "distroless_builder_image": "racket/racket:8.11-full",
-      "distroless_image": "gcr.io/distroless/base-debian12",
-      "alpine_packages": [
-        "racket"
-      ]
-    }
-  },
-  {
     "name": "ruby",
     "install_command": "bundle install",
     "test_command": "bundle exec rspec",
@@ -1025,33 +948,6 @@
       "alpine_image": "swift:5.10-slim",
       "distroless_builder_image": "swift:5.10-noble",
       "distroless_image": "gcr.io/distroless/cc-debian12"
-    }
-  },
-  {
-    "name": "tcl",
-    "start_command": [
-      "tclsh",
-      "main.tcl"
-    ],
-    "fallback_start_command": [
-      "tclsh",
-      "{{FILE}}"
-    ],
-    "is_compiled": false,
-    "heuristics": {
-      "primary": [],
-      "fallback": [
-        "*.tcl"
-      ]
-    },
-    "docker": {
-      "debian_image": "debian:bookworm-slim",
-      "alpine_image": "alpine:3.19",
-      "distroless_builder_image": "debian:bookworm-slim",
-      "distroless_image": "gcr.io/distroless/base-debian12",
-      "alpine_packages": [
-        "tcl"
-      ]
     }
   },
   {

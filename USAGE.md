@@ -7,7 +7,7 @@
 Ensure you have Go 1.22+ installed.
 
 ```bash
-git clone https://github.com/samuel/mkconf.git
+git clone https://github.com/SamuelMarks/mkconf.git
 cd mkconf
 go build -o mkconf ./cmd/mkconf
 ```

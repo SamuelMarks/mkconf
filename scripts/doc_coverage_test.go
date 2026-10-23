@@ -6,66 +6,104 @@ import (
 	"testing"
 )
 
-func TestRunCoverage(t *testing.T) {
+func TestRunCoverageOnRepoRoot(t *testing.T) {
 	cov, err := run("..")
 	if err != nil {
 		t.Fatalf("run failed: %v", err)
 	}
-	if cov < 0 || cov > 100 {
-		t.Errorf("Invalid coverage: %f", cov)
+	if cov != 100.0 {
+		t.Errorf("Expected exact 100.0%% doc coverage across repository, got %.2f%%", cov)
 	}
+}
 
-	err = os.MkdirAll("testdata_not_ignored", 0755)
-	if err != nil {
-		t.Fatalf("mkdir error: %v", err)
-	}
-	badFile2 := filepath.Join("testdata_not_ignored", "bad.go")
-	err = os.WriteFile(badFile2, []byte("package bad\nfunc main() {\n"), 0644)
-	if err != nil {
+func TestRunCoverageUndocumentedConstructs(t *testing.T) {
+	tmpDir := t.TempDir()
+
+	hiddenDir := filepath.Join(tmpDir, ".hidden")
+	vendorDir := filepath.Join(tmpDir, "vendor")
+	_ = os.MkdirAll(hiddenDir, 0755)
+	_ = os.MkdirAll(vendorDir, 0755)
+	ignoredSrc := `package ignored
+func Undoc() {}
+`
+	_ = os.WriteFile(filepath.Join(hiddenDir, "ignored.go"), []byte(ignoredSrc), 0644)
+	_ = os.WriteFile(filepath.Join(vendorDir, "ignored.go"), []byte(ignoredSrc), 0644)
+	_ = os.WriteFile(filepath.Join(tmpDir, "readme.txt"), []byte("non-go file"), 0644)
+
+	src := `package sample
+
+type Embedded struct{}
+
+type UndocStruct struct {
+	Embedded
+	FieldA int
+}
+
+var UndocVar = 1
+
+// DocFunc has doc for documentedArg only.
+func DocFunc(_ int, documentedArg string, missingParam int) {}
+
+func UndocFunc() {}
+`
+	if err := os.WriteFile(filepath.Join(tmpDir, "sample.go"), []byte(src), 0644); err != nil {
 		t.Fatalf("write error: %v", err)
 	}
 
-	_, err = run("testdata_not_ignored")
-	if err == nil {
-		t.Errorf("Expected parse error")
+	cov, err := run(tmpDir)
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
 	}
-	os.RemoveAll("testdata_not_ignored")
+	if cov != 20.0 {
+		t.Errorf("Expected 20.0%% coverage for partially documented sample, got %.1f%%", cov)
+	}
+}
 
-	err = os.MkdirAll("testdata_empty", 0755)
-	if err != nil {
-		t.Fatalf("mkdir error: %v", err)
+func TestRunCoverageErrorsAndMain(t *testing.T) {
+	origRoot := rootDir
+	origExit := osExit
+	t.Cleanup(func() {
+		rootDir = origRoot
+		osExit = origExit
+	})
+
+	badDir := t.TempDir()
+	badFile := filepath.Join(badDir, "bad.go")
+	badSrc := `package bad
+func main() {
+`
+	if err := os.WriteFile(badFile, []byte(badSrc), 0644); err != nil {
+		t.Fatalf("write error: %v", err)
 	}
-	if err != nil {
-		t.Fatalf("MkdirAll failed: %v", err)
+	if _, err := run(badDir); err == nil {
+		t.Error("Expected parse error on invalid Go syntax")
 	}
-	defer os.RemoveAll("testdata_empty")
-	cov, err = run("testdata_empty")
+
+	emptyDir := t.TempDir()
+	cov, err := run(emptyDir)
 	if err != nil {
-		t.Errorf("Expected no error")
+		t.Errorf("Expected no error for empty dir, got %v", err)
 	}
 	if cov != 100.0 {
-		t.Errorf("Expected 100.0 coverage for empty dir")
+		t.Errorf("Expected 100.0 coverage for empty dir, got %f", cov)
 	}
 
-	_, err = run("/path/does/not/exist/surely")
-	if err == nil {
-		t.Errorf("Expected walk error")
+	if _, err := run(filepath.Join(emptyDir, "does_not_exist")); err == nil {
+		t.Error("Expected walk error for nonexistent path")
 	}
 
-	// Test main success
-	rootDir = "testdata_empty"
+	rootDir = emptyDir
 	osExitCalled := false
-	osExit = func(code int) { osExitCalled = true }
+	osExit = func(_ int) { osExitCalled = true }
 	main()
 	if osExitCalled {
-		t.Errorf("main exited on success")
+		t.Error("main exited on success")
 	}
 
-	// Test main failure
-	rootDir = "/path/does/not/exist/surely"
+	rootDir = filepath.Join(emptyDir, "does_not_exist")
 	osExitCalled = false
 	main()
 	if !osExitCalled {
-		t.Errorf("main did not exit on failure")
+		t.Error("main did not exit on failure")
 	}
 }

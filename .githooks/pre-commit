@@ -5,11 +5,11 @@ echo "Running pre-commit hook..."
 
 # 0. Check formatting
 echo "Checking formatting..."
-FMT_OUTPUT=$(go fmt ./...)
+FMT_OUTPUT=$(gofmt -s -l .)
 if [ -n "$FMT_OUTPUT" ]; then
-    echo "The following files were formatted:"
+    echo "The following files are not properly formatted:"
     echo "$FMT_OUTPUT"
-    echo "Please stage them and try committing again."
+    echo "Please run 'go fmt ./...' and stage the changes."
     exit 1
 fi
 
@@ -17,8 +17,8 @@ fi
 echo "Running lint checks..."
 if command -v golangci-lint >/dev/null 2>&1; then
     golangci-lint run ./...
-elif command -v $(go env GOPATH)/bin/golangci-lint >/dev/null 2>&1; then
-    $(go env GOPATH)/bin/golangci-lint run ./...
+elif command -v "$(go env GOPATH)/bin/golangci-lint" >/dev/null 2>&1; then
+    "$(go env GOPATH)/bin/golangci-lint" run ./...
 else
     echo "golangci-lint is not installed. Please install it."
     exit 1
@@ -28,6 +28,7 @@ fi
 echo "Running tests and checking coverage..."
 go test -coverprofile=coverage.out ./...
 COV=$(go tool cover -func=coverage.out | awk '/^total:/ { print $3 }')
+rm -f coverage.out
 if [ "$COV" != "100.0%" ]; then
     echo "Test coverage is not 100% (it is $COV). Please add more tests."
     exit 1
@@ -38,15 +39,15 @@ echo "Test coverage is 100.0%"
 echo "Checking documentation coverage..."
 DOC_COV=$(go run scripts/doc_coverage.go)
 if [ "$DOC_COV" != "100.0" ]; then
-    echo "Documentation coverage is not 100% (it is $DOC_COV). Please document all exported symbols."
+    echo "Documentation coverage is not 100% (it is $DOC_COV). Please document all symbols."
     exit 1
 fi
 echo "Doc coverage is 100.0%"
 
 echo "Updating shields in README.md..."
-# macOS requires empty string '' for sed -i
-sed -i '' -E 's/badge\/Test_Coverage-[0-9.]+%25/badge\/Test_Coverage-'"${COV%?}"'%25/' README.md
-sed -i '' -E 's/badge\/Doc_Coverage-[0-9.]+%25/badge\/Doc_Coverage-'"$DOC_COV"'%25/' README.md
-git add README.md
+COV_NUM="${COV%?}"
+TMP_README=$(mktemp)
+sed -E "s/badge\/Test_Coverage-[0-9.]+%25/badge\/Test_Coverage-${COV_NUM}%25/; s/badge\/Doc_Coverage-[0-9.]+%25/badge\/Doc_Coverage-${DOC_COV}%25/" README.md > "$TMP_README"
+mv "$TMP_README" README.md
 
 echo "All pre-commit checks passed!"

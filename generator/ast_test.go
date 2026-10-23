@@ -1,8 +1,9 @@
 package generator
 
 import (
-	"github.com/moby/buildkit/frontend/dockerfile/parser"
 	"testing"
+
+	"github.com/moby/buildkit/frontend/dockerfile/parser"
 )
 
 func TestGenerateString(t *testing.T) {
@@ -14,7 +15,7 @@ func TestGenerateString(t *testing.T) {
 	addInstruction(root, "FROM", "ubuntu")
 	addInstruction(root, "RUN", "echo", "hello")
 
-	expected := "FROM ubuntu\nRUN echo hello\n"
+	expected := "FROM ubuntu" + newline + "RUN echo hello" + newline
 	if out := GenerateString(root); out != expected {
 		t.Errorf("expected %q, got %q", expected, out)
 	}
@@ -25,8 +26,13 @@ func TestGenerateString(t *testing.T) {
 	addInstruction(rootMulti, "FROM", "scratch")
 	addInstruction(rootMulti, "COPY", "--from=builder", "/app", "/app")
 
-	expectedMulti := "FROM ubuntu AS builder\nRUN echo hello\n\nFROM scratch\nCOPY --from=builder /app /app\n"
+	expectedMulti := "FROM ubuntu AS builder" + newline + "RUN echo hello" + newline + newline + "FROM scratch" + newline + "COPY --from=builder /app /app" + newline
 	if out := GenerateString(rootMulti); out != expectedMulti {
 		t.Errorf("expected %q, got %q", expectedMulti, out)
+	}
+
+	res := resolveProjectCommands(nil, "echo", "'")
+	if res.lang != "Base" {
+		t.Errorf("expected Base for nil info, got %s", res.lang)
 	}
 }

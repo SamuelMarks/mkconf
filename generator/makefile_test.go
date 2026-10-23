@@ -16,8 +16,17 @@ func TestMakefile(t *testing.T) {
 	}
 
 	makefile := GenerateMakefile(info)
-	if !strings.Contains(makefile, "build:") {
-		t.Errorf("Expected Makefile output")
+	expectedSnippets := []string{
+		"make install_base  - Install Go",
+		"install_deps:" + newline + tab + "go mod download",
+		"build:" + newline + tab + "go build",
+		"test:" + newline + tab + "go test",
+		"run:" + newline + tab + "/app/app",
+	}
+	for _, snippet := range expectedSnippets {
+		if !strings.Contains(makefile, snippet) {
+			t.Errorf("Expected Makefile to contain %q, got: %s", snippet, makefile)
+		}
 	}
 }
 
@@ -26,18 +35,18 @@ func TestMakefileEmptyInfo(t *testing.T) {
 
 	makefile := GenerateMakefile(info)
 	if !strings.Contains(makefile, "No install dependencies command defined") {
-		t.Errorf("Expected empty install cmd fallback in Makefile")
+		t.Error("Expected empty install cmd fallback in Makefile")
 	}
 	if !strings.Contains(makefile, "No build command defined") {
-		t.Errorf("Expected empty build cmd fallback in Makefile")
+		t.Error("Expected empty build cmd fallback in Makefile")
 	}
 	if !strings.Contains(makefile, "No test command defined") {
-		t.Errorf("Expected empty test cmd fallback in Makefile")
+		t.Error("Expected empty test cmd fallback in Makefile")
 	}
 	if !strings.Contains(makefile, "No start command defined") {
-		t.Errorf("Expected empty run cmd fallback in Makefile")
+		t.Error("Expected empty run cmd fallback in Makefile")
 	}
 	if !strings.Contains(makefile, "make install_base  - Install Base") {
-		t.Errorf("Expected 'Base' fallback for language in Makefile")
+		t.Error("Expected 'Base' fallback for language in Makefile")
 	}
 }

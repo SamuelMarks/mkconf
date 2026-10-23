@@ -1,11 +1,17 @@
+version: "2"
+
 linters:
   enable:
     - errcheck
-    - gosimple
+    - errorlint
+    - gocritic
     - govet
     - ineffassign
+    - misspell
+    - revive
     - staticcheck
-    - typecheck
+    - unconvert
+    - unparam
     - unused
 
 run:

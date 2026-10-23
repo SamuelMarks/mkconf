@@ -1,4 +1,5 @@
-// Package main provides a script to calculate documentation coverage for Go source files.
+// Package main provides an AST-based analyzer to calculate documentation coverage
+// across files, packages, types, struct fields, constants, variables, functions, and arguments.
 package main
 
 import (
@@ -8,11 +9,99 @@ import (
 	"go/token"
 	"os"
 	"path/filepath"
+	"strconv"
 	"strings"
 )
 
+// rootDir specifies the default root directory scanned by main.
 var rootDir = "."
 
+// isSkippedDir reports whether a directory name should be ignored during documentation scanning.
+//
+// Parameters:
+//   - name: The base directory name to evaluate.
+func isSkippedDir(name string) bool {
+	if name != "." && name != ".." && strings.HasPrefix(name, ".") {
+		return true
+	}
+	return name == "vendor" || name == "testdata"
+}
+
+// inspectFuncDecl counts documentation coverage for a function or method and all of its named parameters.
+//
+// Parameters:
+//   - d: The *ast.FuncDecl AST node to inspect.
+//
+// Returns the total number of documentable items and the number of documented items.
+func inspectFuncDecl(d *ast.FuncDecl) (int, int) {
+	total := 1
+	documented := 0
+	docText := ""
+	if d.Doc != nil && strings.TrimSpace(d.Doc.Text()) != "" {
+		documented++
+		docText = d.Doc.Text()
+	}
+
+	if d.Type.Params != nil {
+		for _, field := range d.Type.Params.List {
+			for _, name := range field.Names {
+				if name.Name == "_" {
+					continue
+				}
+				total++
+				if strings.Contains(docText, name.Name) {
+					documented++
+				}
+			}
+		}
+	}
+
+	return total, documented
+}
+
+// inspectGenDecl counts documentation coverage for types, struct fields, constants, and variables.
+//
+// Parameters:
+//   - d: The *ast.GenDecl AST node to inspect.
+//
+// Returns the total number of documentable items and the number of documented items.
+func inspectGenDecl(d *ast.GenDecl) (int, int) {
+	var total, documented int
+	for _, spec := range d.Specs {
+		switch s := spec.(type) {
+		case *ast.TypeSpec:
+			total++
+			if d.Doc != nil || s.Doc != nil {
+				documented++
+			}
+			if st, ok := s.Type.(*ast.StructType); ok && st.Fields != nil {
+				for _, field := range st.Fields.List {
+					count := len(field.Names)
+					if count == 0 {
+						count = 1
+					}
+					total += count
+					if field.Doc != nil || field.Comment != nil {
+						documented += count
+					}
+				}
+			}
+		case *ast.ValueSpec:
+			for range s.Names {
+				total++
+				if d.Doc != nil || s.Doc != nil || s.Comment != nil {
+					documented++
+				}
+			}
+		}
+	}
+	return total, documented
+}
+
+// run walks the directory tree rooted at root and returns the documentation coverage percentage.
+//
+// Parameters:
+//   - root: The root directory path to recursively analyze.
 func run(root string) (float64, error) {
 	var total, documented int
 
@@ -21,7 +110,7 @@ func run(root string) (float64, error) {
 			return err
 		}
 		if info.IsDir() {
-			if (info.Name() != "." && info.Name() != ".." && strings.HasPrefix(info.Name(), ".")) || info.Name() == "vendor" || info.Name() == "scripts" || info.Name() == "testdata" {
+			if isSkippedDir(info.Name()) {
 				return filepath.SkipDir
 			}
 			return nil
@@ -44,33 +133,13 @@ func run(root string) (float64, error) {
 		for _, decl := range f.Decls {
 			switch d := decl.(type) {
 			case *ast.FuncDecl:
-				if d.Name.IsExported() {
-					total++
-					if d.Doc != nil {
-						documented++
-					}
-				}
+				tCount, dCount := inspectFuncDecl(d)
+				total += tCount
+				documented += dCount
 			case *ast.GenDecl:
-				for _, spec := range d.Specs {
-					switch s := spec.(type) {
-					case *ast.TypeSpec:
-						if s.Name.IsExported() {
-							total++
-							if d.Doc != nil || s.Doc != nil {
-								documented++
-							}
-						}
-					case *ast.ValueSpec:
-						for _, name := range s.Names {
-							if name.IsExported() {
-								total++
-								if d.Doc != nil || s.Doc != nil {
-									documented++
-								}
-							}
-						}
-					}
-				}
+				tCount, dCount := inspectGenDecl(d)
+				total += tCount
+				documented += dCount
 			}
 		}
 
@@ -88,15 +157,16 @@ func run(root string) (float64, error) {
 	return float64(documented) / float64(total) * 100, nil
 }
 
-// override exit for testing
+// osExit points to os.Exit to allow overriding termination behavior in unit tests.
 var osExit = os.Exit
 
+// main executes the documentation coverage analyzer and prints the result to stdout.
 func main() {
 	cov, err := run(rootDir)
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "Error: %v\n", err)
+		_, _ = fmt.Fprintln(os.Stderr, "Error:", err)
 		osExit(1)
 		return
 	}
-	fmt.Printf("%.1f\n", cov)
+	_, _ = fmt.Fprintln(os.Stdout, strconv.FormatFloat(cov, 'f', 1, 64))
 }
